@@ -16,9 +16,12 @@ Add the package to your Xcode project using Swift Package Manager:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/yourusername/DicyaninEntityManagement.git", from: "1.0.0")
+    .package(url: "https://github.com/hunterh37/DicyaninEntityManagement.git", from: "1.0.0"),
+    .package(url: "https://github.com/hunterh37/DicyaninEntity.git", from: "1.0.0")  // Required dependency
 ]
 ```
+
+> **Note**: This package requires `DicyaninEntity` as a dependency. Make sure to include both packages in your project.
 
 ## Usage
 
