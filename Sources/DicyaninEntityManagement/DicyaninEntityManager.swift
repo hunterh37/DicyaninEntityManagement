@@ -5,7 +5,7 @@ public class DicyaninEntityManager {
     // MARK: - Properties
     
     /// The root entity that contains all scenes
-    private let rootEntity: Entity
+    let rootEntity: Entity
     
     /// Currently loaded scene
     private(set) public var currentScene: DicyaninScene?
