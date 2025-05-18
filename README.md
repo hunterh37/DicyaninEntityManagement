@@ -2,6 +2,9 @@
 
 A Swift package for managing 3D entities and scenes in RealityKit applications.
 
+> **Why use this package?**  
+> This package provides a streamlined way to manage multiple 3D entities in visionOS applications. It handles the complexity of loading, positioning, and managing multiple models in a scene, making it easy to create rich spatial experiences. Perfect for applications that need to display and interact with multiple 3D objects simultaneously.
+
 ## Features
 
 - Scene management with entity configurations
