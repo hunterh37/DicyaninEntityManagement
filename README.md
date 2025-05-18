@@ -19,21 +19,42 @@ import DicyaninEntityManagement
 
 struct MySceneView: View {
     var body: some View {
+        // Simple usage with default scene and default entity
+        DicyaninEntityView()
+        
+        // Use default entity configuration with custom scene details
         DicyaninEntityView(
-            provider: DefaultDicyaninEntityViewProvider(
-                scene: DicyaninSceneBuilder(
-                    id: "my_scene",
-                    name: "My First Scene",
-                    description: "A simple scene with a spinning cube"
-                )
-                .addEntity(DicyaninEntityConfiguration(
+            sceneId: "my_scene",
+            sceneName: "My First Scene",
+            sceneDescription: "A simple scene with default entity"
+        )
+        
+        // Use custom entity configuration
+        DicyaninEntityView(
+            sceneId: "custom_scene",
+            sceneName: "Custom Scene",
+            sceneDescription: "A scene with custom entities",
+            entityConfigurations: [
+                DicyaninEntityConfiguration(
                     name: "spinning_cube",
                     position: SIMD3<Float>(0, 0, -1),
                     scale: SIMD3<Float>(repeating: 0.3),
                     animation: ModelAnimation(type: .spin(speed: 2.0, axis: SIMD3<Float>(0, 1, 0)))
-                ))
-                .build()
-            )
+                )
+            ]
+        )
+        
+        // Use default entity configuration with custom handlers
+        DicyaninEntityView(
+            onLoadingStateChanged: { isLoading in
+                print("Loading state: \(isLoading)")
+            },
+            onError: { error in
+                print("Error occurred: \(error)")
+            },
+            onEntitiesLoaded: { entities in
+                print("Loaded \(entities.count) entities")
+            }
         )
     }
 }
@@ -242,7 +263,29 @@ import DicyaninEntityManagement
 
 struct ContentView: View {
     var body: some View {
+        // Use default scene and entity
         DicyaninEntityView()
+        
+        // Or customize just the scene details
+        DicyaninEntityView(
+            sceneId: "custom_default",
+            sceneName: "Custom Default",
+            sceneDescription: "A customized default scene"
+        )
+        
+        // Or use custom entities
+        DicyaninEntityView(
+            sceneId: "custom_entities",
+            sceneName: "Custom Entities",
+            sceneDescription: "A scene with custom entities",
+            entityConfigurations: [
+                DicyaninEntityConfiguration(
+                    name: "custom_entity",
+                    position: SIMD3<Float>(0, 0, -1),
+                    scale: SIMD3<Float>(repeating: 0.5)
+                )
+            ]
+        )
     }
 }
 ```

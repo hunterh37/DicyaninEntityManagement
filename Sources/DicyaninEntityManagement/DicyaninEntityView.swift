@@ -10,26 +10,53 @@ public struct DicyaninEntityView: View {
     
     private let provider: DicyaninEntityViewProvider
     
-    public init(provider: DicyaninEntityViewProvider = DefaultDicyaninEntityViewProvider(
-        scene: DicyaninScene(
-            id: "demo_scene",
-            name: "Demo Scene",
-            description: "Demo scene description",
-            entityConfigurations: [
-                DicyaninEntityConfiguration(
-                    name: "Flower",
-                    position: SIMD3<Float>(0, 0, -1),
-                    scale: SIMD3<Float>(repeating: 1)
-                ),
-                DicyaninEntityConfiguration(
-                    name: "Camera",
-                    position: SIMD3<Float>(1, 0, -1),
-                    scale: SIMD3<Float>(repeating: 1)
-                ),
-            ]
+    /// Default entity configurations for a basic scene
+    public static let defaultEntityConfigurations: [DicyaninEntityConfiguration] = [
+        DicyaninEntityConfiguration(
+            name: "default_entity",
+            position: SIMD3<Float>(0, 0, -1),
+            scale: SIMD3<Float>(repeating: 0.5)
         )
-    )) {
+    ]
+    
+    /// Creates a new entity view with a custom provider
+    /// - Parameter provider: The provider to use for scene configuration
+    public init(provider: DicyaninEntityViewProvider) {
         self.provider = provider
+    }
+    
+    /// Creates a new entity view with a default scene
+    /// - Parameters:
+    ///   - sceneId: Unique identifier for the scene
+    ///   - sceneName: Display name for the scene
+    ///   - sceneDescription: Description of the scene
+    ///   - entityConfigurations: Array of entity configurations (defaults to DicyaninEntityView.defaultEntityConfigurations)
+    ///   - onLoadingStateChanged: Optional loading state handler
+    ///   - onError: Optional error handler
+    ///   - onEntitiesLoaded: Optional entity loaded handler
+    public init(
+        sceneId: String = "default_scene",
+        sceneName: String = "Default Scene",
+        sceneDescription: String = "A default scene with basic entities",
+        entityConfigurations: [DicyaninEntityConfiguration] = defaultEntityConfigurations,
+        onLoadingStateChanged: ((Bool) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil,
+        onEntitiesLoaded: (([DicyaninEntity]) -> Void)? = nil
+    ) {
+        let scene = DicyaninSceneBuilder(
+            id: sceneId,
+            name: sceneName,
+            description: sceneDescription
+        )
+        .addEntities(entityConfigurations)
+        .build()
+        
+        self.provider = DefaultDicyaninEntityViewProvider(
+            scene: scene,
+            onLoadingStateChanged: onLoadingStateChanged,
+            onError: onError,
+            onEntitiesLoaded: onEntitiesLoaded
+        )
     }
     
     public var body: some View {
