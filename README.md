@@ -10,6 +10,34 @@ A Swift package for managing 3D entities and scenes in RealityKit applications.
 - Thread-safe entity management
 - Memory-efficient resource handling
 
+## Quick Example
+
+```swift
+import SwiftUI
+import RealityKit
+import DicyaninEntityManagement
+
+struct MySceneView: View {
+    var body: some View {
+        DicyaninEntityView(
+            provider: DefaultDicyaninEntityViewProvider(
+                scene: DicyaninSceneBuilder(
+                    id: "my_scene",
+                    name: "My First Scene",
+                    description: "A simple scene with a spinning cube"
+                )
+                .addEntity(DicyaninEntityConfiguration(
+                    name: "spinning_cube",
+                    position: SIMD3<Float>(0, 0, -1),
+                    scale: SIMD3<Float>(repeating: 0.3),
+                    animation: ModelAnimation(type: .spin(speed: 2.0, axis: SIMD3<Float>(0, 1, 0)))
+                ))
+                .build()
+            )
+        )
+    }
+}
+
 ## Installation
 
 Add the package to your Xcode project using Swift Package Manager:
