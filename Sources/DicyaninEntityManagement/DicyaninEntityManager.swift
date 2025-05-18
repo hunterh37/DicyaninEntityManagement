@@ -2,25 +2,16 @@ import RealityKit
 import DicyaninEntity
 
 public class DicyaninEntityManager {
-    // MARK: - Types
-    
-    /// Represents a single slide in the presentation
-    public struct Slide {
-        let id: Int
-        let entities: [DicyaninEntity]
-        var isVisible: Bool = false
-    }
-    
     // MARK: - Properties
     
-    /// The current slide being displayed
-    private(set) public var currentSlideId: Int?
-    
-    /// All slides in the presentation
-    private var slides: [Int: Slide] = [:]
-    
-    /// The root entity that contains all slides
+    /// The root entity that contains all scenes
     private let rootEntity: Entity
+    
+    /// Currently loaded scene
+    private(set) public var currentScene: DicyaninScene?
+    
+    /// Dictionary of loaded scenes
+    private var loadedScenes: [String: DicyaninScene] = [:]
     
     // MARK: - Initialization
     
@@ -28,73 +19,68 @@ public class DicyaninEntityManager {
         self.rootEntity = Entity()
     }
     
-    // MARK: - Public Methods
+    // MARK: - Scene Management
     
-    /// Adds a new slide to the presentation
-    /// - Parameters:
-    ///   - id: Unique identifier for the slide
-    ///   - entities: Array of DicyaninEntity objects to show on this slide
-    public func addSlide(id: Int, entities: [DicyaninEntity]) {
-        // Hide all entities initially
-        entities.forEach { $0.isEnabled = false }
-        
-        // Add entities to root
-        entities.forEach { rootEntity.addChild($0) }
-        
-        // Store slide information
-        slides[id] = Slide(id: id, entities: entities)
-    }
-    
-    /// Shows a specific slide and hides all others
-    /// - Parameter id: The ID of the slide to show
-    public func showSlide(id: Int) {
-        guard let slide = slides[id] else {
-            print("Warning: Slide with ID \(id) not found")
-            return
+    /// Loads a scene configuration
+    /// - Parameter scene: The scene configuration to load
+    /// - Returns: Array of created entities
+    @MainActor
+    public func loadScene(_ scene: DicyaninScene) async throws -> [DicyaninEntity] {
+        // Clear existing scene if any
+        if let currentScene = currentScene {
+            try await unloadScene(currentScene)
         }
         
-        // Hide all slides
-        slides.values.forEach { slide in
-            slide.entities.forEach { $0.isEnabled = false }
+        // Create and configure entities
+        var entities: [DicyaninEntity] = []
+        for config in scene.entityConfigurations {
+            let entity = try await DicyaninEntity.create(from: config)
+            rootEntity.addChild(entity)
+            entities.append(entity)
         }
         
-        // Show the requested slide
-        slide.entities.forEach { $0.isEnabled = true }
+        // Store scene
+        loadedScenes[scene.id] = scene
+        currentScene = scene
         
-        currentSlideId = id
+        return entities
     }
     
-    /// Returns the root entity that contains all slides
+    /// Unloads a scene and removes its entities
+    /// - Parameter scene: The scene to unload
+    @MainActor
+    public func unloadScene(_ scene: DicyaninScene) async throws {
+        guard let loadedScene = loadedScenes[scene.id] else { return }
+        
+        // Remove all entities from the scene
+        for config in loadedScene.entityConfigurations {
+            if let entity = rootEntity.children.first(where: { $0.name == config.name }) {
+                entity.removeFromParent()
+            }
+        }
+        
+        // Clear scene data
+        loadedScenes.removeValue(forKey: scene.id)
+        if currentScene?.id == scene.id {
+            currentScene = nil
+        }
+    }
+    
+    /// Returns the root entity that contains all scenes
     public func getRootEntity() -> Entity {
         return rootEntity
     }
     
-    /// Removes a slide from the presentation
-    /// - Parameter id: The ID of the slide to remove
-    public func removeSlide(id: Int) {
-        guard let slide = slides[id] else { return }
-        
-        // Remove entities from root
-        slide.entities.forEach { $0.removeFromParent() }
-        
-        // Remove slide from storage
-        slides.removeValue(forKey: id)
-        
-        // Update current slide if needed
-        if currentSlideId == id {
-            currentSlideId = nil
-        }
+    /// Returns all entities for a specific scene
+    /// - Parameter sceneId: The ID of the scene
+    /// - Returns: Array of DicyaninEntity objects for the scene
+    public func getEntitiesForScene(_ sceneId: String) -> [DicyaninEntity]? {
+        guard let scene = loadedScenes[sceneId] else { return nil }
+        return rootEntity.children.compactMap { $0 as? DicyaninEntity }
     }
     
-    /// Returns all entities for a specific slide
-    /// - Parameter id: The ID of the slide
-    /// - Returns: Array of DicyaninEntity objects for the slide
-    public func getEntitiesForSlide(id: Int) -> [DicyaninEntity]? {
-        return slides[id]?.entities
-    }
-    
-    /// Returns the total number of slides
-    public var slideCount: Int {
-        return slides.count
+    /// Returns the total number of loaded scenes
+    public var sceneCount: Int {
+        return loadedScenes.count
     }
 } 
