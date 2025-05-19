@@ -462,6 +462,10 @@ This approach allows you to:
 - Xcode 15.0+
 - Swift 5.9+
 
+## Author
+
+Hunter Harris. Copyright © 2025 Dicyanin Labs.
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details. 
