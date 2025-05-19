@@ -34,6 +34,7 @@ public struct DicyaninEntityView: View {
     ///   - onLoadingStateChanged: Optional loading state handler
     ///   - onError: Optional error handler
     ///   - onEntitiesLoaded: Optional entity loaded handler
+    ///   - onEntityLoaded: Optional handler for each individual entity as it's loaded
     public init(
         sceneId: String = "default_scene",
         sceneName: String = "Default Scene",
@@ -41,7 +42,8 @@ public struct DicyaninEntityView: View {
         entityConfigurations: [DicyaninEntityConfiguration] = defaultEntityConfigurations,
         onLoadingStateChanged: ((Bool) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil,
-        onEntitiesLoaded: (([DicyaninEntity]) -> Void)? = nil
+        onEntitiesLoaded: (([DicyaninEntity]) -> Void)? = nil,
+        onEntityLoaded: ((DicyaninEntity) -> Void)? = nil
     ) {
         let scene = DicyaninSceneBuilder(
             id: sceneId,
@@ -55,7 +57,8 @@ public struct DicyaninEntityView: View {
             scene: scene,
             onLoadingStateChanged: onLoadingStateChanged,
             onError: onError,
-            onEntitiesLoaded: onEntitiesLoaded
+            onEntitiesLoaded: onEntitiesLoaded,
+            onEntityLoaded: onEntityLoaded
         )
     }
     
@@ -72,6 +75,12 @@ public struct DicyaninEntityView: View {
         provider.onLoadingStateChanged?(true)
         do {
             let entities = try await entityManager.loadScene(provider.scene)
+            
+            // Call onEntityLoaded for each entity
+            for entity in entities {
+                provider.onEntityLoaded?(entity)
+            }
+            
             provider.onEntitiesLoaded?(entities)
             provider.onLoadingStateChanged?(false)
         } catch {

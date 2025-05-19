@@ -15,6 +15,10 @@ public protocol DicyaninEntityViewProvider {
     
     /// Optional entity loaded handler
     var onEntitiesLoaded: (([DicyaninEntity]) -> Void)? { get }
+    
+    /// Optional handler for each individual entity as it's loaded
+    /// This is called for each entity right after it's created and before it's added to the scene
+    var onEntityLoaded: ((DicyaninEntity) -> Void)? { get }
 }
 
 /// A default implementation of DicyaninEntityViewProvider
@@ -23,17 +27,20 @@ public struct DefaultDicyaninEntityViewProvider: DicyaninEntityViewProvider {
     public let onLoadingStateChanged: ((Bool) -> Void)?
     public let onError: ((Error) -> Void)?
     public let onEntitiesLoaded: (([DicyaninEntity]) -> Void)?
+    public let onEntityLoaded: ((DicyaninEntity) -> Void)?
     
     public init(
         scene: DicyaninScene,
         onLoadingStateChanged: ((Bool) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil,
-        onEntitiesLoaded: (([DicyaninEntity]) -> Void)? = nil
+        onEntitiesLoaded: (([DicyaninEntity]) -> Void)? = nil,
+        onEntityLoaded: ((DicyaninEntity) -> Void)? = nil
     ) {
         self.scene = scene
         self.onLoadingStateChanged = onLoadingStateChanged
         self.onError = onError
         self.onEntitiesLoaded = onEntitiesLoaded
+        self.onEntityLoaded = onEntityLoaded
     }
 }
 

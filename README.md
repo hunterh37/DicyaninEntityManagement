@@ -423,6 +423,38 @@ let config = DicyaninEntityConfiguration(
 )
 ```
 
+### Package Integration
+
+You can easily integrate this package with other packages by using the `onEntityLoaded` handler. This is called for each entity as it's loaded, allowing you to customize or extend the entity with functionality from other packages:
+
+```swift
+import SwiftUI
+import RealityKit
+import DicyaninEntityManagement
+import YourOtherPackage
+
+struct IntegratedSceneView: View {
+    var body: some View {
+        DicyaninEntityView(
+            onEntityLoaded: { entity in
+                // Integrate with another package
+                entity.enableCustomFeature()  // From your other package
+                entity.setupCustomBehavior()  // From your other package
+                
+                // Or add custom components
+                entity.components[YourCustomComponent.self] = YourCustomComponent()
+            }
+        )
+    }
+}
+```
+
+This approach allows you to:
+- Add custom functionality to each entity
+- Integrate with other packages seamlessly
+- Keep the integration code clean and maintainable
+- Handle each entity individually as it's loaded
+
 ## Requirements
 
 - visionOS 1.0+
