@@ -69,8 +69,8 @@ Add the package to your Xcode project using Swift Package Manager:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/hunterh37/DicyaninEntityManagement.git", from: "1.0.0"),
-    .package(url: "https://github.com/hunterh37/DicyaninEntity.git", from: "1.0.0")  // Required dependency
+    .package(url: "https://github.com/hunterh37/DicyaninEntityManagement.git", from: "0.0.1"),
+    .package(url: "https://github.com/hunterh37/DicyaninEntity.git", from: "0.0.1")  // Required dependency
 ]
 ```
 
