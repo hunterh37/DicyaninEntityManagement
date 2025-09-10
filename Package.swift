@@ -12,7 +12,7 @@ let package = Package(
             targets: ["DicyaninEntityManagement"]),
     ],
     dependencies: [
-        .package(path: "../DicyaninEntity")
+        .package(url: "https://github.com/hunterh37/DicyaninEntity.git", from: "1.0.0")
     ],
     targets: [
         .target(
